@@ -50,9 +50,9 @@ public class AdsServiceImpl implements AdsService {
     public AdsDto addAds(CreateAdsDto createAdsDto)  throws NotFoundException {
         logger.info("Method addAds is running");
         User user = userRepository.findById(createAdsDto.getIdAuthor()).orElseThrow(NotFoundException::new);
-        Ads newAds = adsMapper.createAdsDtoToAds(createAdsDto, user);
+        Ads newAds = adsMapper.createAdsDtoToAds(createAdsDto);
         adsRepository.save(newAds);
-        return adsMapper.adsToAdsDto(newAds, user);
+        return adsMapper.adsToAdsDto(newAds);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class AdsServiceImpl implements AdsService {
         User authorAds = commentRepository
                 .getUserByCommentId(id).orElseThrow(NotFoundException::new);
 
-        return commentMapper.entityToDto(foundComment, authorAds);
+        return commentMapper.entityToDto(foundComment);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class AdsServiceImpl implements AdsService {
         newComment.setAds(foundAds);
         commentRepository.save(newComment);
 
-        return commentMapper.entityToDto(newComment, author);
+        return commentMapper.entityToDto(newComment);
     }
 
     @Override
@@ -140,7 +140,7 @@ public class AdsServiceImpl implements AdsService {
             ads = adsRepository.findById(ad_pk).orElseThrow(NotFoundException::new);
             commentUpdate = commentMapper.adsCommentDtoToEntity(adsComment, author, ads);
             commentRepository.save(commentUpdate);
-            return commentMapper.entityToDto(commentUpdate, author);
+            return commentMapper.entityToDto(commentUpdate);
         }
         throw new NotFoundException();
     }

@@ -14,11 +14,11 @@ import java.util.Collection;
 public interface AdsCommentMapper {
     AdsCommentMapper INSTANCE = Mappers.getMapper(AdsCommentMapper.class);
 
-    @Mapping(source = "user.id", target = "idAuthor")
+    @Mapping(source = "adsComment.user.id", target = "idAuthor")
     @Mapping(source = "adsComment.createdAt", target = "createdAt")
     @Mapping(source = "adsComment.id", target = "pk")
     @Mapping(source = "adsComment.text", target = "text")
-    AdsCommentDto entityToDto(AdsComment adsComment, User user);
+    AdsCommentDto entityToDto(AdsComment adsComment);
 
     @Mapping(source = "adsCommentDto.idAuthor", target = "user.id")
     @Mapping(source = "adsCommentDto.createdAt", target = "createdAt")

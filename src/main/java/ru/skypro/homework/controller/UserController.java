@@ -70,16 +70,16 @@ public class UserController {
                     )
             }
     )
-    @GetMapping("{/id}")
-    public ResponseEntity<User> getUser(@PathVariable @Min(1) Long id){
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable @Min(1) Long id){
         logger.info("Method getUser is running: {}", id);
-        Optional<User> foundUser;
+        UserDto foundUser;
         try {
             foundUser = userService.getUserById(id);
         } catch (NotFoundException e){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(foundUser.get());
+        return ResponseEntity.ok(foundUser);
     }
 
     /** Редактировать пользователя,

@@ -13,7 +13,7 @@ public interface UserService {
 
     UserDto updateUser(UserDto userDto)throws NotFoundException;
 
-    Optional<User> getUserById(Long id);
+    UserDto getUserById(Long id);
 
     Collection<UserDto> getAllUsers();
 }

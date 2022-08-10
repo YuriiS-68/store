@@ -15,7 +15,7 @@ public class CreateAdsDto {
     @Size(max = 700, message = "FirstName should be at least 500 chars")
     private String description;
 
-    private Collection<Picture> image;
+//    private Collection<Picture> image;
 
     @Min((1))
     private Long idAuthor;

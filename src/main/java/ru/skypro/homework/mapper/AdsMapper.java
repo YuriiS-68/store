@@ -19,15 +19,15 @@ public interface AdsMapper {
     @Mapping(source = "createAdsDto.title", target = "title")
     @Mapping(source = "createAdsDto.description", target = "description")
     @Mapping(source = "createAdsDto.price", target = "price")
-    @Mapping(source = "createAdsDto.image", target = "pictures")
-    Ads createAdsDtoToAds(CreateAdsDto createAdsDto, User user);
+//    @Mapping(source = "createAdsDto.image", target = "pictures")
+    Ads createAdsDtoToAds(CreateAdsDto createAdsDto);
 
     @Mapping(source = "ads.title", target = "title")
     @Mapping(source = "ads.price", target = "price")
-    @Mapping(source = "user.id", target = "idAuthor")
+    @Mapping(source = "ads.user.id", target = "idAuthor")
     @Mapping(source = "ads.id", target = "pk")
     @Mapping(source = "ads.pictures", target = "image")
-    AdsDto adsToAdsDto(Ads ads, User user);
+    AdsDto adsToAdsDto(Ads ads);
 
     @Mapping(source = "adsDto.title", target = "title")
     @Mapping(source = "adsDto.price", target = "price")
