@@ -43,7 +43,8 @@ public class AuthController {
         if (authService.register(req, role)) {
             user.setEmail(req.getUsername());
             user.setUserName(req.getUsername());
-            user.setPassword(req.getPassword());
+            user.setPassword(authService.getEncryptedPassword(req));
+            /*user.setPassword(req.getPassword());*/
             user.setFirstName(req.getFirstName());
             user.setLastName(req.getLastName());
             user.setPhone(req.getPhone());

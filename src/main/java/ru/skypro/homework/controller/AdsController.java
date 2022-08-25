@@ -64,7 +64,7 @@ public class AdsController {
      * Получить все существующие объявления GET <a href="http://localhost:3000/ads">...</a>
      **/
 
-    @Operation(
+    /*@Operation(
             summary = "Получить все объявления",
             description = "Получение всех объявлений",
             responses = {

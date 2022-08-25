@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -37,9 +38,20 @@ public class AuthServiceImpl implements AuthService {
             return false;
         }
         ru.skypro.homework.model.User user = userRepository.getUserByUserName(userName);
+        String encryptedPassword = user.getPassword();
+        String encryptedPasswordWithoutEncryptionType = encryptedPassword.substring(8);
+        return encoder.matches(password, encryptedPasswordWithoutEncryptionType);
+    }
+
+   /* @Override
+    public boolean login(String userName, String password) {
+        if (!userRepository.existsUserByUserName(userName)) {
+            return false;
+        }
+        ru.skypro.homework.model.User user = userRepository.getUserByUserName(userName);
         String usersPassword = user.getPassword();
         return password.equals(usersPassword);
-    }
+    }*/
 
     @Override
     public boolean register(RegisterReq registerReq, Role role) {
@@ -62,6 +74,12 @@ public class AuthServiceImpl implements AuthService {
         String currentUserName = authentication.getName();
         Long idUser = userRepository.getIdByUserName(currentUserName);
         return idUser;
+    }
+
+    @Override
+    public String getEncryptedPassword(RegisterReq registerReq) {
+        UserDetails userDetails = manager.loadUserByUsername(registerReq.getUsername());
+        return userDetails.getPassword();
     }
 
 
