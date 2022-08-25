@@ -127,6 +127,9 @@ public class UserController {
     @PostMapping("/set_password")
     public ResponseEntity<NewPasswordDto> setPassword(@RequestBody NewPasswordDto password){
         logger.info("Method setPassword is running: {}", password);
+        if (!userService.setNewPassword(password)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         return ResponseEntity.status(HttpStatus.OK).body(password);
     }
 
