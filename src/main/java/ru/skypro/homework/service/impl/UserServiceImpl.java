@@ -2,8 +2,10 @@ package ru.skypro.homework.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.CreateUserDto;
+import ru.skypro.homework.dto.NewPasswordDto;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.exception.NotFoundException;
 import ru.skypro.homework.mapper.UserMapper;
@@ -19,10 +21,14 @@ public class UserServiceImpl implements UserService {
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final AuthServiceImpl authService;
+    private final PasswordEncoder encoder;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, AuthServiceImpl authService, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.authService = authService;
+        this.encoder = encoder;
     }
 
     public UserDto addUser(CreateUserDto createUser){
@@ -51,5 +57,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public Collection<UserDto> getAllUsers() {
         return userMapper.entitiesToDto(userRepository.getAll().get());
+    }
+
+    public boolean setNewPassword(NewPasswordDto password) {
+        User user = userRepository.getUserById(authService.getIdCurrentUser());
+        String encryptedPassword = user.getPassword();
+        String encryptedPasswordWithoutEncryptionType = encryptedPassword.substring(8);
+        if (!encoder.matches(password.getCurrentPassword(), encryptedPasswordWithoutEncryptionType)) {
+            return false;
+        }
+        return true;
+
     }
 }
