@@ -81,11 +81,6 @@ public class AdsServiceImpl implements AdsService {
         return adsMapper.entitiesToDto(adsMe);
     }
 
-    @Override
-    public Collection<AdsDto> getAllAds() {
-        Collection<Ads> adsCollection = adsRepository.findAll();
-        return adsMapper.entitiesToDto(adsCollection);
-    }
 
     @Override
     public Collection<AdsDto> getAdsMe(Long id) throws NotFoundException {
