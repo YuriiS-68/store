@@ -19,8 +19,8 @@ import java.util.Objects;
 public class Picture {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_picture", unique = true)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "id_picture", unique = true)
     private Long id;
     private Integer fileSize;
     private String filePath;
@@ -28,8 +28,9 @@ public class Picture {
     @Lob
     private byte[] data;
 
-    @ManyToOne
-    @JoinColumn(name = "id_ads")
+    @OneToOne
+    @MapsId
+//    @JoinColumn(name = "id_ads")
     private Ads ads;
 
 

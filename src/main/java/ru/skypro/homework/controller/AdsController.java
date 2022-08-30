@@ -8,10 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsCommentDto;
 import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateAdsDto;
@@ -21,6 +24,7 @@ import ru.skypro.homework.service.AdsService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.io.IOException;
 import java.util.Collection;
 
 @Slf4j
@@ -28,7 +32,7 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/ads")
+@RequestMapping("/api/ads")
 @Tag(name = "Контроллер Объявлений и Отзывов", description = "добавление, поиск, изменение и удаление Объявлений и Отзывов")
 public class AdsController {
 
@@ -101,11 +105,15 @@ public class AdsController {
                     )
             }
     )
-   @PostMapping
+//   @PostMapping
+//   @PostMapping(consumes = {"application/json", MediaType.MULTIPART_FORM_DATA_VALUE})
+   @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE ,  MediaType.APPLICATION_JSON_VALUE })
+//   @PostMapping(consumes =  MediaType.MULTIPART_FORM_DATA_VALUE )
    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-   public ResponseEntity<AdsDto> addAds(@RequestBody @Valid CreateAdsDto createAds) {
+   public ResponseEntity<AdsDto> addAds(@RequestPart("properties") CreateAdsDto createAds,
+                                        @RequestPart("image") MultipartFile adsPicture) throws IOException {
         logger.info("Method addAds is running: {}", createAds);
-        return ResponseEntity.ok(adsService.addAds(createAds));
+        return ResponseEntity.ok(adsService.addAds(createAds, adsPicture));
    }
 
     /**

@@ -28,10 +28,11 @@ public class Ads {
     @JoinColumn(name = "id_user")
     private User user;
 
-    @OneToMany(mappedBy = "ads", cascade=CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @OneToOne(mappedBy = "ads", cascade=CascadeType.ALL)
+//    @JsonIgnore
+    @PrimaryKeyJoinColumn
     @ToString.Exclude
-    private Collection<Picture> pictures;
+    private Picture picture;
 
     @OneToMany(mappedBy = "ads", cascade=CascadeType.ALL)
     @JsonIgnore

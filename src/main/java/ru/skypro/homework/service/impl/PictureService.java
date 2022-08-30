@@ -37,17 +37,18 @@ public class PictureService {
         this.pictureMapper = pictureMapper;
     }
 
-    public PictureDto uploadAdsPicture(Long idAds, MultipartFile pictureFile) throws IOException, NotFoundException {
+    public Picture uploadAdsPicture(Long idAds, MultipartFile pictureFile) throws IOException, NotFoundException {
         logger.info("Method was called - uploadPetPhoto");
         Ads ads = adsRepository.findById(idAds).orElseThrow(NotFoundException::new);
+        String idAdsStr = Long.toString(idAds);
 
         Picture picture = new Picture();
         picture.setAds(ads);
+        picture.setFilePath("/api/picture/" + idAdsStr);
         picture.setFileSize((int) pictureFile.getSize());
         picture.setMediaType(pictureFile.getContentType());
         picture.setData(pictureFile.getBytes());
-        pictureRepository.save(picture);
-        return pictureMapper.pictureToPictureDto(picture, ads);
+        return pictureRepository.save(picture);
     }
 
     public List<ResponseEntity<byte[]>> downloadPictures(Long idAds) {

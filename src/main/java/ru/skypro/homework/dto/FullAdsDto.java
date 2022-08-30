@@ -27,7 +27,7 @@ public class FullAdsDto {
     private String email;
 
 
-    private Collection<Picture> image;
+    private String image;
 
     @Size(min = 10, message = "Phone should be at least 10 chars")
     private String phone;

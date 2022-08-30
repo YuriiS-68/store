@@ -18,4 +18,6 @@ public class PictureDto {
 
     @NotBlank
     private String mediaType;
+    @NotBlank
+    private String filePath;
 }

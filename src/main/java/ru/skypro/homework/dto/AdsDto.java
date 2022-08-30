@@ -16,9 +16,9 @@ public class AdsDto {
     @NotBlank
     private String title;
 
-    private String filePath;
+    private String image;
 
-    private Collection<Picture> image;
+//    private Collection<Picture> image;
 
     @Min((1))
     private Long pk;

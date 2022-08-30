@@ -3,10 +3,8 @@ package ru.skypro.homework.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.AdsCommentDto;
-import ru.skypro.homework.dto.AdsDto;
-import ru.skypro.homework.dto.CreateAdsDto;
-import ru.skypro.homework.dto.FullAdsDto;
+import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.*;
 import ru.skypro.homework.exception.NotFoundException;
 import ru.skypro.homework.mapper.AdsCommentMapper;
 import ru.skypro.homework.mapper.AdsMapper;
@@ -21,6 +19,7 @@ import ru.skypro.homework.repo.UserRepository;
 import ru.skypro.homework.service.AdsService;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.Collection;
 
 @Service
@@ -36,28 +35,40 @@ public class AdsServiceImpl implements AdsService {
     private final AdsCommentRepository commentRepository;
 
     private final PictureRepository pictureRepository;
+    private final PictureService pictureService;
 
     private final AdsMapper adsMapper;
 
     private final AdsCommentMapper commentMapper;
 
     public AdsServiceImpl(AdsRepository adsRepository, UserRepository userRepository, AdsCommentRepository commentRepository,
-                          PictureRepository pictureRepository, AdsMapper adsMapper, AdsCommentMapper commentMapper) {
+                          PictureRepository pictureRepository, PictureService pictureService, AdsMapper adsMapper, AdsCommentMapper commentMapper) {
         this.adsRepository = adsRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.pictureRepository = pictureRepository;
+        this.pictureService = pictureService;
         this.adsMapper = adsMapper;
         this.commentMapper = commentMapper;
     }
 
-    @Override
+/*    @Override
     public AdsDto addAds(CreateAdsDto createAdsDto)  throws NotFoundException {
         logger.info("Method addAds is running");
         User user = userRepository.findById(createAdsDto.getIdAuthor()).orElseThrow(NotFoundException::new);
         Ads newAds = adsMapper.createAdsDtoToAds(createAdsDto);
         adsRepository.save(newAds);
         return adsMapper.adsToAdsDto(newAds);
+    }*/
+    @Override
+    public AdsDto addAds(CreateAdsDto createAdsDto, MultipartFile pictureFile) throws NotFoundException, IOException {
+        logger.info("Method createAd is running");
+//        User user = userRepository.findById(createAdsDto.getIdAuthor()).orElseThrow(NotFoundException::new);
+        Ads newAd = adsMapper.createAdsDtoToAds(createAdsDto);
+        newAd = adsRepository.save(newAd);
+        Picture picture = pictureService.uploadAdsPicture(newAd.getId(), pictureFile);
+        newAd.setPicture(picture);
+        return adsMapper.adsToAdsDto(adsRepository.save(newAd));
     }
 
     @Override
@@ -119,9 +130,9 @@ public class AdsServiceImpl implements AdsService {
     public AdsDto updateAds(AdsDto adsDto, Long id) throws NotFoundException {
         if(adsRepository.existsById(id)){
             Ads updateAds = adsMapper.adsDtoToAds(adsDto);
-            Collection<Picture> pictures = pictureRepository.findAllByAds_Id(id);
+            Picture picture = pictureRepository.findById(id).orElseThrow(NotFoundException::new);
             updateAds.setId(id);
-            updateAds.setPictures(pictures);
+            updateAds.setPicture(picture);
             adsRepository.save(updateAds);
             return adsDto;
         }

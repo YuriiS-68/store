@@ -7,6 +7,7 @@ import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateAdsDto;
 import ru.skypro.homework.dto.FullAdsDto;
 import ru.skypro.homework.model.Ads;
+import ru.skypro.homework.model.Picture;
 import ru.skypro.homework.model.User;
 
 import java.util.Collection;
@@ -25,21 +26,21 @@ public interface AdsMapper {
     @Mapping(source = "ads.price", target = "price")
     @Mapping(source = "ads.user.id", target = "idAuthor")
     @Mapping(source = "ads.id", target = "pk")
-    @Mapping(source = "ads.pictures", target = "image")
+    @Mapping(source = "ads.picture.filePath", target = "image")
     AdsDto adsToAdsDto(Ads ads);
 
     @Mapping(source = "adsDto.title", target = "title")
     @Mapping(source = "adsDto.price", target = "price")
     @Mapping(source = "adsDto.idAuthor", target = "user.id")
     @Mapping(source = "adsDto.pk", target = "id")
-    @Mapping(source = "adsDto.image", target = "pictures")
+//    @Mapping(source = "adsDto.image", target = "pictures")
     Ads adsDtoToAds(AdsDto adsDto);
 
     @Mapping(source = "ads.title", target = "title")
     @Mapping(source = "ads.price", target = "price")
     @Mapping(source = "ads.description", target = "description")
     @Mapping(source = "ads.id", target = "pk")
-    @Mapping(source = "ads.pictures", target = "image")
+    @Mapping(source = "ads.picture.filePath", target = "image")
     @Mapping(source = "user.firstName", target = "authorFirstName")
     @Mapping(source = "user.lastName", target = "authorLastName")
     @Mapping(source = "user.phone", target = "phone")

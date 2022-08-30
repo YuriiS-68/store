@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.PictureDto;
 import ru.skypro.homework.exception.NotFoundException;
+import ru.skypro.homework.mapper.PictureMapper;
+import ru.skypro.homework.model.Ads;
 import ru.skypro.homework.model.Picture;
+import ru.skypro.homework.repo.AdsRepository;
 import ru.skypro.homework.service.impl.PictureService;
 
 import javax.validation.constraints.Min;
@@ -31,15 +34,19 @@ import static org.springframework.http.ResponseEntity.ok;
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @Validated
-@RequestMapping("/picture")
+@RequestMapping("/api/picture")
 @Tag(name = "Контроллер Картинок", description = "добавление, поиск, и удаление Картинок для объявлений")
 public class PictureController {
 
     private final Logger logger = LoggerFactory.getLogger(PictureController.class);
     private final PictureService pictureService;
+    private final PictureMapper pictureMapper;
+    private final AdsRepository adsRepository;
 
-    public PictureController(PictureService pictureService) {
+    public PictureController(PictureService pictureService, PictureMapper pictureMapper, AdsRepository adsRepository) {
         this.pictureService = pictureService;
+        this.pictureMapper = pictureMapper;
+        this.adsRepository = adsRepository;
     }
 
     /**
@@ -61,13 +68,14 @@ public class PictureController {
     public ResponseEntity<PictureDto> uploadAdsPicture(@PathVariable @Min(1) Long idAds,
                                                        @RequestParam MultipartFile adsPicture) {
         logger.info("Method uploadAdsPicture is running: {}", idAds);
-        PictureDto pictureDto;
+        Ads ad = adsRepository.findById(idAds).orElseThrow(NotFoundException::new);
+        Picture picture;
         try{
-            pictureDto = pictureService.uploadAdsPicture(idAds, adsPicture);
+            picture = pictureService.uploadAdsPicture(idAds, adsPicture);
         } catch (IOException | NotFoundException e){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(pictureDto);
+        return ResponseEntity.ok(pictureMapper.pictureToPictureDto(picture, ad));
     }
 
     /**

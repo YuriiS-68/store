@@ -15,5 +15,6 @@ public interface PictureMapper {
     @Mapping(source = "picture.id", target = "pk")
     @Mapping(source = "picture.fileSize", target = "fileSize")
     @Mapping(source = "picture.mediaType", target = "mediaType")
+    @Mapping(source = "picture.filePath", target = "filePath")
     PictureDto pictureToPictureDto(Picture picture, Ads ads);
 }
