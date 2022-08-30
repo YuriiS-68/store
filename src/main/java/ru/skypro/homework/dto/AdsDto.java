@@ -1,12 +1,9 @@
 package ru.skypro.homework.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
-import ru.skypro.homework.model.Picture;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.util.Collection;
 
 @Data
 public class AdsDto {
@@ -18,7 +15,9 @@ public class AdsDto {
 
     private String filePath;
 
-    private Collection<Picture> image;
+    /*private Collection<Picture> image;*/
+
+    private String image;
 
     @Min((1))
     private Long pk;

@@ -1,10 +1,8 @@
 package ru.skypro.homework.dto;
 
 import lombok.Data;
-import ru.skypro.homework.model.Picture;
 
 import javax.validation.constraints.*;
-import java.util.Collection;
 
 @Data
 public class FullAdsDto {
@@ -24,7 +22,7 @@ public class FullAdsDto {
     private String email;
 
 
-    private Collection<Picture> image;
+    private String image;
 
     @Pattern(regexp = "((\\d{1,3}?|\\+\\d\\s?|\\+?|\\+\\d{3}\\s?|\\(?|-?)?\\d{2}(\\(?\\d{2}\\)?[\\- ]?)?[\\d\\- ]{7,10})")
     private String phone;

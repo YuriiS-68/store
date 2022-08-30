@@ -1,11 +1,9 @@
 package ru.skypro.homework.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -26,6 +24,7 @@ public class Picture {
     private String filePath;
     private String mediaType;
     @Lob
+    @Type (type = "org.hibernate.type.ImageType")
     private byte[] data;
 
     @ManyToOne

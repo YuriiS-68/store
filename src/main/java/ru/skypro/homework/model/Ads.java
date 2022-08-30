@@ -28,10 +28,12 @@ public class Ads {
     @JoinColumn(name = "id_user")
     private User user;
 
-    @OneToMany(mappedBy = "ads", cascade=CascadeType.ALL, orphanRemoval = true)
+    private String image;
+
+    /*@OneToMany(mappedBy = "ads", cascade=CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @ToString.Exclude
-    private Collection<Picture> pictures;
+    private Collection<Picture> pictures;*/
 
     @OneToMany(mappedBy = "ads", cascade=CascadeType.ALL)
     @JsonIgnore

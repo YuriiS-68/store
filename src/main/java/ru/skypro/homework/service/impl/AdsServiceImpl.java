@@ -88,7 +88,7 @@ public class AdsServiceImpl implements AdsService {
             Ads updateAds = adsMapper.adsDtoToAds(adsDto);
             Collection<Picture> pictures = pictureRepository.findAllByAds_Id(id);
             updateAds.setId(id);
-            updateAds.setPictures(pictures);
+            /*updateAds.setPictures(pictures);*/
             adsRepository.save(updateAds);
             return adsDto;
         }
