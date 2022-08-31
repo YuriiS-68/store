@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.exception.NotFoundException;
 import ru.skypro.homework.service.AdsService;
@@ -21,6 +22,7 @@ import ru.skypro.homework.service.CommentService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.io.IOException;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -88,7 +90,7 @@ public class AdsController {
     /**
      * POST <a href="http://localhost:3000/ads">...</a>
      * Добавление объявления.
-     * @param createAds объявление
+     * @param ads объявление
      * @return добавленное объявление в формате json
      */
    @Operation(
@@ -103,9 +105,10 @@ public class AdsController {
     )
    @PostMapping
    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-   public ResponseEntity<AdsDto> addAds(@RequestBody @Valid CreateAdsDto createAds) {
-        logger.info("Method addAds is running: {}", createAds);
-        return ResponseEntity.ok(adsService.addAds(createAds));
+   public ResponseEntity<AdsDto> addAds(@RequestPart("properties") @Valid CreateAdsDto ads,
+                                        @RequestPart ("image") @Valid MultipartFile pic) throws IOException {
+        logger.info("Method addAds is running: {}", ads);
+        return ResponseEntity.ok(adsService.addAds(ads, pic));
    }
 
     /**

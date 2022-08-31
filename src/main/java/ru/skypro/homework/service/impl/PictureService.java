@@ -66,7 +66,7 @@ public class PictureService {
         }
         Picture picture = findPicture(idAds);
         picture.setAds(ads);
-        picture.setFilePath(filepath.toString());
+        picture.setFilePath("api/" + filepath.toString());
         picture.setMediaType(pictureFile.getContentType());
         picture.setData(pictureFile.getBytes());
         pictureRepository.save(picture);

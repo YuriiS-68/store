@@ -24,7 +24,8 @@ public class Ads {
     private String title;
     private String description;
     private Integer price;
-    @ManyToOne
+
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_user")
     private User user;
 
