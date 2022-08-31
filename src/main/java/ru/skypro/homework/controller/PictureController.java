@@ -14,7 +14,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.PictureDto;
-import ru.skypro.homework.exception.NotFoundException;
 import ru.skypro.homework.model.Picture;
 import ru.skypro.homework.service.impl.PictureService;
 
@@ -59,15 +58,15 @@ public class PictureController {
     )
     @PostMapping(value = "/{idAds}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PictureDto> uploadAdsPicture(@PathVariable @Min(1) Long idAds,
-                                                       @RequestParam MultipartFile adsPicture) {
+                                                       @RequestParam MultipartFile adsPicture) throws IOException {
         logger.info("Method uploadAdsPicture is running: {}", idAds);
         PictureDto pictureDto;
-        try{
+        /*try{
             pictureDto = pictureService.uploadAdsPicture(idAds, adsPicture);
         } catch (IOException | NotFoundException e){
             return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(pictureDto);
+        }*/
+        return ResponseEntity.ok(pictureService.uploadAdsPicture(idAds, adsPicture));
     }
 
     /**

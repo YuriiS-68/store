@@ -33,7 +33,7 @@ CREATE TABLE pictures (
     file_path TEXT NULL,
     file_size INTEGER NULL,
     media_type VARCHAR(255),
-    data bytea
+    data TEXT
 );
 
 -- changeSet yuvis:5

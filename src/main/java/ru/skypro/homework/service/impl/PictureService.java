@@ -47,11 +47,12 @@ public class PictureService {
     }
 
     public PictureDto uploadAdsPicture(Long idAds, MultipartFile pictureFile) throws IOException, NotFoundException {
-        logger.info("Method was called - uploadPetPhoto");
-        Ads ads = adsRepository.findById(idAds).orElseThrow(NotFoundException::new);
+        logger.info("Method was called - uploadPhoto");
+        Ads ads = adsRepository.getAdsById(idAds);
 
-        Path filepath = Path.of(picturesDir, ads + "." + getExtensions(pictureFile.getOriginalFilename()));
+        Path filepath = Path.of(picturesDir, ads.getId() + "." + getExtensions(pictureFile.getOriginalFilename()));
         Files.createDirectories(filepath.getParent());
+
         Files.deleteIfExists(filepath);
 
         try (
@@ -60,6 +61,7 @@ public class PictureService {
                 BufferedInputStream bis = new BufferedInputStream(is, 1024);
                 BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
         ) {
+
             bis.transferTo(bos);
         }
         Picture picture = findPicture(idAds);
@@ -72,13 +74,7 @@ public class PictureService {
         ads.setImage(filepath.toString());
         adsRepository.save(ads);
 
-        PictureDto pictureDto = new PictureDto();
-        pictureDto.setIdAds(ads.getId());
-        pictureDto.setFileSize(Math.toIntExact(pictureFile.getSize()));
-        pictureDto.setPk(picture.getId());
-        pictureDto.setMediaType(picture.getMediaType());
-
-        return pictureDto;
+        return pictureMapper.pictureToPictureDto(picture, ads);
     }
 
 
@@ -127,7 +123,7 @@ public class PictureService {
     }
 
     public Picture findPicture(Long adsId) {
-        logger.info("Method for finding avatar was invoked");
+        logger.info("Method for finding picture was invoked");
         return pictureRepository.findById(adsId).orElse(new Picture());
     }
 

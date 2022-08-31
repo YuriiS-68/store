@@ -28,9 +28,9 @@ public class User {
     private String password;
     private boolean enabled;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    /*@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
-    private Authorities authority;
+    private Authorities authority;*/
 
     @OneToMany(mappedBy = "user", cascade=CascadeType.ALL)
     @JsonIgnore
