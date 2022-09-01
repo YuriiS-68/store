@@ -326,13 +326,12 @@ public class AdsController {
     )
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<AdsDto> updateAds(@RequestBody @Valid AdsDto adsDto,
-                                            @PathVariable @Min(1) Long id) {
+    public ResponseEntity<AdsDto> updateAds(@RequestBody @Valid AdsDto adsDto, @PathVariable @Min(1) Long id) {
         logger.info("Method updateAds is running: {} {}", adsDto, id);
         AdsDto adsUpdatedDto;
         try {
             adsUpdatedDto = adsService.updateAds(adsDto, id);
-        }catch (NotFoundException e){
+        }catch (NotFoundException | IOException e){
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(adsUpdatedDto);

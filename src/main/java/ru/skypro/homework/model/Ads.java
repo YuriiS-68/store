@@ -10,7 +10,6 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -32,7 +31,7 @@ public class Ads {
     private String image;
 
     @OneToOne(mappedBy = "ads", cascade=CascadeType.ALL)
-    @JsonIgnore
+
     @PrimaryKeyJoinColumn
     private Picture picture;
 
@@ -52,5 +51,19 @@ public class Ads {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Ads{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", user=" + user +
+                ", image='" + image + '\'' +
+                ", picture=" + picture.getId() +
+                ", adsComments=" + adsComments +
+                '}';
     }
 }

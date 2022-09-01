@@ -14,7 +14,6 @@ import ru.skypro.homework.dto.ResponseWrapperAds;
 import ru.skypro.homework.exception.NotFoundException;
 import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.model.Ads;
-import ru.skypro.homework.model.Picture;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repo.AdsRepository;
 import ru.skypro.homework.repo.PictureRepository;
@@ -35,16 +34,16 @@ public class AdsServiceImpl implements AdsService {
 
     private final PictureRepository pictureRepository;
 
-    private final PictureService pictureService;
+    private final PictureServiceImpl pictureServiceImpl;
 
     private final AdsMapper adsMapper;
 
     public AdsServiceImpl(AdsRepository adsRepository, UserRepository userRepository, PictureRepository pictureRepository,
-                          PictureService pictureService, AdsMapper adsMapper) {
+                          PictureServiceImpl pictureServiceImpl, AdsMapper adsMapper) {
         this.adsRepository = adsRepository;
         this.userRepository = userRepository;
         this.pictureRepository = pictureRepository;
-        this.pictureService = pictureService;
+        this.pictureServiceImpl = pictureServiceImpl;
         this.adsMapper = adsMapper;
     }
 
@@ -62,7 +61,7 @@ public class AdsServiceImpl implements AdsService {
         adsRepository.save(newAd);
 
         Long justSavedAdsId = adsRepository.getAdsByDescription(newAd.getDescription()).getId();
-        pictureService.uploadAdsPicture(justSavedAdsId, pic);
+        pictureServiceImpl.uploadAdsPicture(justSavedAdsId, pic);
 
         return adsMapper.adsToAdsDto(newAd);
     }
@@ -110,14 +109,28 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public AdsDto updateAds(AdsDto adsDto, Long id) throws NotFoundException {
+    public AdsDto updateAds(AdsDto adsDto, Long id) throws NotFoundException, IOException {
         if(adsRepository.existsById(id)){
-            Ads updateAds = adsMapper.adsDtoToAds(adsDto);
+
+            String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+            User currentUser = userRepository.findUserByUsername(currentUserName);
+            /*Ads newAd = adsMapper.createAdsDtoToAds(createAdsDto);*/
+            Ads updatingAd = adsRepository.getAdsById(id);
+            updatingAd.setTitle(adsDto.getTitle());
+            updatingAd.setPrice(adsDto.getPrice());
+            updatingAd.setDescription(adsDto.getImage());
+            //дополнить description
+            updatingAd.setUser(currentUser);
+            adsRepository.save(updatingAd);
+
+            return adsMapper.adsToAdsDto(updatingAd);
+
+            /*Ads updateAds = adsMapper.adsDtoToAds(adsDto);
             Collection<Picture> pictures = pictureRepository.findAllByAds_Id(id);
             updateAds.setId(id);
-            /*updateAds.setPictures(pictures);*/
-            adsRepository.save(updateAds);
-            return adsDto;
+            updateAds.setPictures(pictures);*/
+           /* adsRepository.save(updateAds);
+            return adsDto;*/
         }
         throw new NotFoundException();
     }

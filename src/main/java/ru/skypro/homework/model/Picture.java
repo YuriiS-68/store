@@ -32,6 +32,7 @@ public class Picture {
 
     @OneToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "id_ads")
+
     @MapsId
     private Ads ads;
 
@@ -52,4 +53,6 @@ public class Picture {
         result = 31 * result + Arrays.hashCode(data);
         return result;
     }
+
+
 }

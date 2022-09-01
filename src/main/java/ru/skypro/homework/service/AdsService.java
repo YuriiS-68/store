@@ -25,5 +25,5 @@ public interface AdsService {
 
     FullAdsDto getAds(Long id);
 
-    AdsDto updateAds(AdsDto adsDto, Long id);
+    AdsDto updateAds(AdsDto adsDto, Long id) throws IOException;
 }
