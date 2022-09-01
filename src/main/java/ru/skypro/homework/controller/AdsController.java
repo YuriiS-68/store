@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -271,8 +272,9 @@ public class AdsController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<?> removeAds(@PathVariable @Min(1) Long id) {
         logger.info("Method removeAds is running: {}", id);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         try {
-            adsService.removeAds(id);
+            adsService.removeAds(id, auth);
         }catch (NotFoundException e){
             return ResponseEntity.notFound().build();
         }
@@ -324,7 +326,8 @@ public class AdsController {
     )
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<AdsDto> updateAds(@RequestBody @Valid AdsDto adsDto, @PathVariable @Min(1) Long id) {
+    public ResponseEntity<AdsDto> updateAds(@RequestBody @Valid AdsDto adsDto,
+                                            @PathVariable @Min(1) Long id) {
         logger.info("Method updateAds is running: {} {}", adsDto, id);
         AdsDto adsUpdatedDto;
         try {

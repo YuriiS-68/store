@@ -1,7 +1,11 @@
 package ru.skypro.homework.service;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.*;
+import ru.skypro.homework.dto.AdsDto;
+import ru.skypro.homework.dto.CreateAdsDto;
+import ru.skypro.homework.dto.FullAdsDto;
+import ru.skypro.homework.dto.ResponseWrapperAds;
 
 import java.io.IOException;
 
@@ -17,7 +21,7 @@ public interface AdsService {
 
     ResponseWrapperAds getAdsMe(String username);
 
-    void removeAds(Long id);
+    void removeAds(Long id, Authentication auth);
 
     FullAdsDto getAds(Long id);
 

@@ -2,7 +2,9 @@ package ru.skypro.homework.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsDto;
@@ -91,9 +93,14 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public void removeAds(Long id) {
+    public void removeAds(Long id, Authentication auth) {
+        Ads ads = adsRepository.findById(id).orElseThrow(NotFoundException::new);
+        UserDetails currentUser = (UserDetails) auth.getPrincipal();
 
-        adsRepository.deleteById(id);
+        if (currentUser.getAuthorities().toString().contains("ADMIN") || auth.getName().equals(ads.getUser().getUsername())) {
+            adsRepository.deleteById(id);
+        }
+
     }
 
     @Override
