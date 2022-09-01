@@ -17,18 +17,22 @@ import java.util.Objects;
 public class Picture {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    /*@GeneratedValue(strategy = GenerationType.IDENTITY)*/
     @Column(name = "id_picture", unique = true)
     private Long id;
-    private Integer fileSize;
+
+    /*private Integer fileSize;*/
+
+    private Long fileSize;
     private String filePath;
     private String mediaType;
     @Lob
     @Type (type = "org.hibernate.type.ImageType")
     private byte[] data;
 
-    @ManyToOne
+    @OneToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "id_ads")
+    @MapsId
     private Ads ads;
 
 

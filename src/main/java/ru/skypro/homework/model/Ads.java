@@ -25,16 +25,16 @@ public class Ads {
     private String description;
     private Integer price;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "id_user")
     private User user;
 
     private String image;
 
-    /*@OneToMany(mappedBy = "ads", cascade=CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "ads", cascade=CascadeType.ALL)
     @JsonIgnore
-    @ToString.Exclude
-    private Collection<Picture> pictures;*/
+    @PrimaryKeyJoinColumn
+    private Picture picture;
 
     @OneToMany(mappedBy = "ads", cascade=CascadeType.ALL)
     @JsonIgnore

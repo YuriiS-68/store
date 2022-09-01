@@ -17,6 +17,7 @@ public class Authorities {
 
     @OneToOne
     @JoinColumn(name = "user_id")
+    @PrimaryKeyJoinColumn
     private User user;
 
     private String username;

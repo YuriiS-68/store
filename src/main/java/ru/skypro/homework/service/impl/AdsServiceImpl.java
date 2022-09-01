@@ -2,6 +2,7 @@ package ru.skypro.homework.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsDto;
@@ -12,6 +13,7 @@ import ru.skypro.homework.exception.NotFoundException;
 import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.model.Ads;
 import ru.skypro.homework.model.Picture;
+import ru.skypro.homework.model.User;
 import ru.skypro.homework.repo.AdsRepository;
 import ru.skypro.homework.repo.PictureRepository;
 import ru.skypro.homework.repo.UserRepository;
@@ -47,8 +49,14 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public AdsDto addAds(CreateAdsDto createAdsDto, MultipartFile pic) throws NotFoundException, IOException {
         logger.info("Method addAds is running");
-        /*User user = userRepository.findById(createAdsDto.getIdAuthor()).orElseThrow(NotFoundException::new);*/
-        Ads newAd = adsMapper.createAdsDtoToAds(createAdsDto);
+        String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findUserByUsername(currentUserName);
+        /*Ads newAd = adsMapper.createAdsDtoToAds(createAdsDto);*/
+        Ads newAd = new Ads();
+        newAd.setTitle(createAdsDto.getTitle());
+        newAd.setDescription(createAdsDto.getDescription());
+        newAd.setPrice(createAdsDto.getPrice());
+        newAd.setUser(currentUser);
         adsRepository.save(newAd);
 
         Long justSavedAdsId = adsRepository.getAdsByDescription(newAd.getDescription()).getId();
@@ -84,6 +92,7 @@ public class AdsServiceImpl implements AdsService {
 
     @Override
     public void removeAds(Long id) {
+
         adsRepository.deleteById(id);
     }
 

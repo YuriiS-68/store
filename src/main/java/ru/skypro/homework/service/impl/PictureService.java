@@ -50,7 +50,7 @@ public class PictureService {
         logger.info("Method was called - uploadPhoto");
         Ads ads = adsRepository.getAdsById(idAds);
 
-        Path filepath = Path.of(picturesDir, ads.getId() + "." + getExtensions(pictureFile.getOriginalFilename()));
+        Path filepath = Path.of(picturesDir, ads.getId().toString());
         Files.createDirectories(filepath.getParent());
 
         Files.deleteIfExists(filepath);
@@ -66,9 +66,10 @@ public class PictureService {
         }
         Picture picture = findPicture(idAds);
         picture.setAds(ads);
-        picture.setFilePath("api/" + filepath.toString());
+        picture.setFilePath(filepath.toString());
         picture.setMediaType(pictureFile.getContentType());
         picture.setData(pictureFile.getBytes());
+        picture.setFileSize(pictureFile.getSize());
         pictureRepository.save(picture);
 
         ads.setImage(filepath.toString());
