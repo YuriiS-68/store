@@ -2,6 +2,10 @@ package ru.skypro.homework.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
@@ -72,9 +76,17 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public Collection<AdsDto> getAllAdsByTitle(String input) {
+    public Collection<AdsDto> getAllAdsByTitle(String input) throws AccessDeniedException {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        UserDetails currentUser = (UserDetails) auth.getPrincipal();
         Collection<Ads> adsCollection = adsRepository.findAllByTitleContainsIgnoreCase(input);
         return adsMapper.entitiesToDto(adsCollection);
+//        if (currentUser.getAuthorities().toString().contains("ADMIN")) {
+//            Collection<Ads> adsCollection = adsRepository.findAllByTitleContainsIgnoreCase(input);
+//            return adsMapper.entitiesToDto(adsCollection);
+//        }else {
+//            throw new AccessDeniedException("You don't have enough right get all ads");
+//        }
     }
 
     @Override
@@ -96,26 +108,6 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public Collection<AdsCommentDto> getAdsComments(Long id) {
-        Collection<AdsComment> adsComments = commentRepository.findAdsCommentsByAds_IdOrderByCreatedAtDesc(id);
-        return commentMapper.entitiesToDto(adsComments);
-    }
-
-    @Override
-    @Transactional
-    public void deleteCommentToAds(Long idAds, Long id) throws NotFoundException {
-        if(commentRepository.deleteCommentToAdsById(idAds, id) != 1){
-            throw new NotFoundException();
-        }
-    }
-
-    @Override
-    public AdsCommentDto getAdsComment(Long idAds, Long id) throws NotFoundException {
-        AdsComment foundComment = commentRepository.getCommentToAdsById(idAds, id).orElseThrow(NotFoundException::new);
-        return commentMapper.entityToDto(foundComment);
-    }
-
-    @Override
     public void removeAds(Long id) {
         adsRepository.deleteById(id);
     }
@@ -126,7 +118,7 @@ public class AdsServiceImpl implements AdsService {
         return adsMapper.adsToFullAdsDto(ads, ads.getUser());
     }
 
-    @Override
+/*    @Override
     public AdsDto updateAds(AdsDto adsDto, Long id) throws NotFoundException {
         if(adsRepository.existsById(id)){
             Ads updateAds = adsMapper.adsDtoToAds(adsDto);
@@ -137,27 +129,18 @@ public class AdsServiceImpl implements AdsService {
             return adsDto;
         }
         throw new NotFoundException();
-    }
-
+    }   */
     @Override
-    public AdsCommentDto addAdsComment(Long idAds, AdsCommentDto adsComment) throws NotFoundException {
-        Ads foundAds = adsRepository.findById(idAds).orElseThrow(NotFoundException::new);
-
-        AdsComment newComment = commentMapper.adsCommentDtoToEntity(adsComment, foundAds);
-        newComment.setAds(foundAds);
-        commentRepository.save(newComment);
-
-        return commentMapper.entityToDto(newComment);
-    }
-
-    @Override
-    public AdsCommentDto updateAdsComment(AdsCommentDto adsCommentDto, Long idAds, Long id) throws NotFoundException {
-        if (commentRepository.existsAdsCommentById(id)) {
-            Ads ads = adsRepository.findById(idAds).orElseThrow(NotFoundException::new);
-            AdsComment commentUpdate = commentMapper.adsCommentDtoToEntity(adsCommentDto, ads);
-            commentRepository.save(commentUpdate);
-            return commentMapper.entityToDto(commentUpdate);
+    public AdsDto updateAds(CreateAdsDto createAdsDto, Long id) throws NotFoundException {
+        if(adsRepository.existsById(id)){
+            Ads updateAds = adsMapper.createAdsDtoToAds(createAdsDto);
+            Picture picture = pictureRepository.findById(id).orElseThrow(NotFoundException::new);
+            updateAds.setId(id);
+            updateAds.setPicture(picture);
+            adsRepository.save(updateAds);
+            return adsMapper.adsToAdsDto(updateAds);
         }
         throw new NotFoundException();
     }
+
 }

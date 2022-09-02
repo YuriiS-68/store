@@ -92,7 +92,7 @@ public class PictureController {
                     )
             }
     )
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> downloadPicture(@PathVariable @Min(1) Long id) {
         logger.info("Method downloadPicture is running: {}", id);
         Picture picture = pictureService.findPictureById(id);

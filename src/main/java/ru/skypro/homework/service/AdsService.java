@@ -1,5 +1,6 @@
 package ru.skypro.homework.service;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.AdsCommentDto;
 import ru.skypro.homework.dto.AdsDto;
@@ -22,19 +23,11 @@ public interface AdsService {
 
     Collection<AdsDto> getAdsMe(Long id);
 
-    Collection<AdsCommentDto> getAdsComments(Long ad_pk);
-
-    void deleteCommentToAds(Long ad_pk, Long id);
-
-    AdsCommentDto getAdsComment(Long ad_pk, Long id);
-
     void removeAds(Long id);
 
     FullAdsDto getAds(Long id);
 
-    AdsDto updateAds(AdsDto adsDto, Long id);
+//    AdsDto updateAds(AdsDto adsDto, Long id);
+    AdsDto updateAds(CreateAdsDto createAdsDto, Long id);
 
-    AdsCommentDto addAdsComment(Long ad_pk, AdsCommentDto adsComment);
-
-    AdsCommentDto updateAdsComment(AdsCommentDto adsComment, Long ad_pk, Long id);
 }

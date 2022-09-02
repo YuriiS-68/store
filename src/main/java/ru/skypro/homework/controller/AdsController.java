@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +21,7 @@ import ru.skypro.homework.dto.CreateAdsDto;
 import ru.skypro.homework.dto.FullAdsDto;
 import ru.skypro.homework.exception.NotFoundException;
 import ru.skypro.homework.service.AdsService;
+import ru.skypro.homework.service.CommentService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -32,13 +33,16 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/api/ads")
+@RequestMapping("/ads")
 @Tag(name = "Контроллер Объявлений и Отзывов", description = "добавление, поиск, изменение и удаление Объявлений и Отзывов")
 public class AdsController {
 
     private final Logger logger = LoggerFactory.getLogger(AdsController.class);
 
     private final AdsService adsService;
+
+    private final CommentService commentService;
+
 
     /**
      * Получить все существующие объявления по строке содержащейся в заголовке GET <a href="http://localhost:3000/ads">...</a>
@@ -56,12 +60,15 @@ public class AdsController {
             }
     )
     @GetMapping(params = {"input"})
+//    @PreAuthorize("hasRol('ROL_ADMIN')")
     public ResponseEntity<Collection<AdsDto>> getAllAdsByTitle(@RequestParam String input) {
         logger.info("Method getAllAds is running");
         Collection<AdsDto> adsDto = adsService.getAllAdsByTitle(input);
-        if (adsDto.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+//        try {
+//            adsDto = adsService.getAllAdsByTitle(input);
+//        } catch (AccessDeniedException e) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        }
         return ResponseEntity.ok(adsDto);
     }
 
@@ -105,10 +112,8 @@ public class AdsController {
                     )
             }
     )
-//   @PostMapping
-//   @PostMapping(consumes = {"application/json", MediaType.MULTIPART_FORM_DATA_VALUE})
-   @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE ,  MediaType.APPLICATION_JSON_VALUE })
-//   @PostMapping(consumes =  MediaType.MULTIPART_FORM_DATA_VALUE )
+
+   @PostMapping(consumes =  MediaType.MULTIPART_FORM_DATA_VALUE )
    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
    public ResponseEntity<AdsDto> addAds(@RequestPart("properties") CreateAdsDto createAds,
                                         @RequestPart("image") MultipartFile adsPicture) throws IOException {
@@ -196,7 +201,7 @@ public class AdsController {
         logger.info("Method getAdsComments is running: {}", ad_pk);
         Collection<AdsCommentDto> listOfAdsComment;
         try{
-            listOfAdsComment = adsService.getAdsComments(ad_pk);
+            listOfAdsComment = commentService.getAdsComments(ad_pk);
         } catch (NotFoundException e){
             return ResponseEntity.notFound().build();
         }
@@ -225,7 +230,7 @@ public class AdsController {
     public ResponseEntity<?> deleteAdsComment(@PathVariable @Min(1) Long ad_pk, @PathVariable @Min(1) Long id){
         logger.info("Method deleteAdsComment is running: {} {}", ad_pk, id);
         try {
-            adsService.deleteCommentToAds(ad_pk, id);
+            commentService.deleteCommentToAds(ad_pk, id);
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
@@ -255,7 +260,7 @@ public class AdsController {
         logger.info("Method getAdsComment is running: {} {}", ad_pk, id);
         AdsCommentDto foundAdsComment;
         try {
-            foundAdsComment = adsService.getAdsComment(ad_pk, id);
+            foundAdsComment = commentService.getAdsComment(ad_pk, id);
         }catch (NotFoundException e){
             return ResponseEntity.notFound().build();
         }
@@ -321,7 +326,7 @@ public class AdsController {
     /** Редактировать объявление по его идентификатору,
      * PUT <a href="http://localhost:3000/ads/">...</a>{id}
      * @param id идентификатор объявления
-     * @param adsDto объявление
+     * @param createAds объявление
      **/
     @Operation(
             summary = "Редактировать объявление",
@@ -333,13 +338,28 @@ public class AdsController {
                     )
             }
     )
-    @PutMapping("/{id}")
+/*    @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<AdsDto> updateAds(@RequestBody @Valid AdsDto adsDto, @PathVariable @Min(1) Long id) {
         logger.info("Method updateAds is running: {} {}", adsDto, id);
         AdsDto adsUpdatedDto;
         try {
             adsUpdatedDto = adsService.updateAds(adsDto, id);
+        }catch (NotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(adsUpdatedDto);
+    }  */
+    @PutMapping(value = "/{id}", consumes =  MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<AdsDto> updateAds(@RequestPart("properties") CreateAdsDto createAds,
+                                            @RequestPart("image") MultipartFile adsPicture,
+                                            @PathVariable @Min(1) Long id) throws IOException {
+        logger.info("Method addAds is running: {}", createAds);
+        logger.info("Method updateAds is running: {} {}", createAds, id);
+        AdsDto adsUpdatedDto;
+        try {
+            adsUpdatedDto = adsService.updateAds(createAds, id);
         }catch (NotFoundException e){
             return ResponseEntity.notFound().build();
         }
@@ -370,7 +390,7 @@ public class AdsController {
         logger.info("Method addAdsComment is running: {} {}", adsId, adsComment);
         AdsCommentDto newCommentDto;
         try {
-            newCommentDto = adsService.addAdsComment(adsId, adsComment);
+            newCommentDto = commentService.addAdsComment(adsId, adsComment);
         }catch (NotFoundException e){
             return ResponseEntity.notFound().build();
         }
@@ -404,7 +424,7 @@ public class AdsController {
         logger.info("Method createAdsComment is running: {} {} {}", adsComment, ad_pk, id);
         AdsCommentDto commentDto;
         try {
-            commentDto = adsService.updateAdsComment(adsComment, ad_pk, id);
+            commentDto = commentService.updateAdsComment(adsComment, ad_pk, id);
         }catch (NotFoundException e){
             return ResponseEntity.notFound().build();
         }
